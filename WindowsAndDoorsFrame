@@ -1,0 +1,114 @@
+package Assigment22;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class WindowsAndDoorsFrame extends JFrame {
+    private JTextField smallWindowsField, largeWindowsField, slidingDoorsField, swingDoorsField;
+    private JLabel costLabel, durationLabel;
+    private WindowsAndDoors windowsAndDoors;
+
+    public WindowsAndDoorsFrame() {
+        setTitle("Window and Door Details");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new GridLayout(4, 2, 10, 10));
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+
+        JLabel smallWindowsLabel = new JLabel("Small Windows:");
+        smallWindowsField = new JTextField();
+        JLabel largeWindowsLabel = new JLabel("Large Windows:");
+        largeWindowsField = new JTextField();
+        JLabel slidingDoorsLabel = new JLabel("Sliding Doors:");
+        slidingDoorsField = new JTextField();
+        JLabel swingDoorsLabel = new JLabel("Swing-open Doors:");
+        swingDoorsField = new JTextField();
+
+        costLabel = new JLabel("Estimated Cost: $0.00");
+        durationLabel = new JLabel("Estimated Duration: 0 days");
+
+        JButton confirmButton = new JButton("Confirm");
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                confirmWindowsAndDoors();
+            }
+        });
+
+        add(smallWindowsLabel);
+        add(smallWindowsField);
+        add(largeWindowsLabel);
+        add(largeWindowsField);
+        add(slidingDoorsLabel);
+        add(slidingDoorsField);
+        add(swingDoorsLabel);
+        add(swingDoorsField);
+        add(costLabel);
+        add(durationLabel);
+        add(new JLabel());
+        add(confirmButton);
+
+        addFieldListeners();
+    }
+
+    private void addFieldListeners() {
+        smallWindowsField.addActionListener(e -> updateEstimates());
+        largeWindowsField.addActionListener(e -> updateEstimates());
+        slidingDoorsField.addActionListener(e -> updateEstimates());
+        swingDoorsField.addActionListener(e -> updateEstimates());
+    }
+
+    private void updateEstimates() {
+        int smallWindows = getIntValue(smallWindowsField.getText());
+        int largeWindows = getIntValue(largeWindowsField.getText());
+        int slidingDoors = getIntValue(slidingDoorsField.getText());
+        int swingDoors = getIntValue(swingDoorsField.getText());
+
+        double cost = smallWindows * WindowsAndDoors.SMALL_WINDOW_COST +
+                      largeWindows * WindowsAndDoors.LARGE_WINDOW_COST +
+                      slidingDoors * WindowsAndDoors.SLIDING_DOOR_COST +
+                      swingDoors * WindowsAndDoors.SWING_DOOR_COST +
+                      WindowsAndDoors.INSTALLATION_COST;
+
+        int duration = (smallWindows + largeWindows + slidingDoors + swingDoors + 3) / 4;
+
+        costLabel.setText("Estimated Cost: $" + String.format("%.2f", cost));
+        durationLabel.setText("Estimated Duration: " + duration + " days");
+    }
+
+    private int getIntValue(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private void confirmWindowsAndDoors() {
+        int smallWindows = getIntValue(smallWindowsField.getText());
+        int largeWindows = getIntValue(largeWindowsField.getText());
+        int slidingDoors = getIntValue(slidingDoorsField.getText());
+        int swingDoors = getIntValue(swingDoorsField.getText());
+
+        if (smallWindows < 0 || largeWindows < 0 || slidingDoors < 0 || swingDoors < 0) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter non-negative values.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        windowsAndDoors = new WindowsAndDoors(smallWindows, largeWindows, slidingDoors, swingDoors);
+        dispose();
+    }
+
+    public WindowsAndDoors getWindowsAndDoors() {
+        return windowsAndDoors;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            WindowsAndDoorsFrame frame = new WindowsAndDoorsFrame();
+            frame.setVisible(true);
+        });
+    }
+}
